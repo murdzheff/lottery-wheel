@@ -1,0 +1,85 @@
+body {
+  background-color: rgb(60, 71, 102);
+  background-image: url(./assets/background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheel-container {
+  min-height: 50vh;
+  min-width: 50vw;
+  max-height: 50vh;
+  max-width: 50vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+#spin {
+  position: absolute;
+  border-radius: 50%;
+  left: 47.5vw;
+  bottom: 44vh;
+  width: 5%;
+  height: 11%;
+  border: 2px solid rgb(242, 238, 247);
+  background-color: rgb(30, 156, 62);
+  cursor: pointer;
+  font-size: larger;
+  color: white;
+  align-self: center;
+  justify-self: center;
+  font-weight: bold;
+  z-index: 5;
+}
+
+#spin:disabled {
+  color: red;
+  background-color: black;
+  cursor: default;
+}
+
+
+
+#arrow {
+  position: absolute;
+  max-width: 5vw;
+  bottom: 70vh;
+  left: 47.5vw;
+}
+
+
+#total {
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+  position: absolute;
+  border:3px solid gold;
+  border-radius: 10px;
+  padding: 2%;
+  background-color: rgba(76, 85, 94, 0.849);
+  bottom: 5vh;
+  opacity: 0;
+  animation-name: fade-in;
+  animation-duration: 2s;
+  animation-delay: 0.1s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
