@@ -1,122 +1,142 @@
 class ViewController {
     constructor() {
-        this.container = document.querySelector('.wheel-container');
-        this.spinButton = document.getElementById("spin");
-        this.wheel = new spinWheel.Wheel(this.container, this.props);
-        this.wheelLogic = wheelLogic;
+        this.wheel = document.getElementById("wheel");
+        this.spinBtn = document.getElementById("spinBtn");
         this.totalHeading = document.getElementById("total")
-        this.wheel.radius = 1;
-        
+        this.wheelLogic = wheelLogic;
+        this.lastPriceIndex = 0;
 
-        //wheel styling
-        this.wheel.items.map(e => {
-            e.backgroundColor = this.getRandomBackgroundColor();
-            e.labelColor = "white"
-        })
-
-        this.wheel.items[17].weight = 2
-        this.wheel.borderWidth = 5;
-        this.wheel.borderColor = "#FFFF";
-
-
-        //events
-        this.spinButton.onclick = (e) => {
-            e.preventDefault()
-            this.totalHeading.textContent = "";
-            this.totalHeading.style.display = "none";
+        //spin btn functionality
+        this.spinBtn.onclick = () => {
             this.spin()
-            
+                .then(() => {
+                    if (this.lastPriceIndex === 18) {
+                        this.spinThreeTimes();
+                    }
+                })
+
+
         }
 
 
-        this.wheel.onRest = (e) => {
+        //create a map that connects the value that is coming from the model
+        //to the elements in the wheel
+        this.createMap = () => {
+            const map = {};
+            let ceil = 18;
 
-            if (e.currentIndex === 17) {
-
-
-                this.delayedLoop();
+            for (let i = 1; i < 19; i++) {
+                if (i === 1) {
+                    map[i] = 1;
+                } else {
+                    map[i] = ceil
+                    ceil--
+                }
             }
+
+            return map;
+
         }
+
+        this.map = this.createMap();
+
+
+
+
+
+        this.populate();
     }
 
 
 
+    //spin once (wheel returns to default position afterwards)
+    async spin() {
 
-    /* functions for the three free spins, adding a delay before each spin and finally showing the total prize won */
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        this.totalHeading.style.display = "none"
+
+        const randomSector = this.wheelLogic.getRandomNumber();
+
+
+        return await new Promise((resolve) => {
+            this.spinBtn.disabled = true;
+            this.wheel.style.transition = "transform 4s ease"
+            this.wheel.style.transform = `rotate(${randomSector * 20 + 360}deg)`;
+            setTimeout(() => {
+                this.lastPrice = this.wheel
+                    .children[this.map[randomSector] - 1]
+                    .innerHTML.split(" ")[1]
+                
+                resolve(this.lastPrice);
+            }, 6000);
+        })
+            .then((res) => {
+                this.lastPriceIndex = randomSector;
+                this.wheel.style.transition = "transform 2s ease"
+                this.wheel.style.transform = `rotate(0)`;
+
+                this.spinBtn.disabled = false;
+
+                return res
+            })
+
+
+
+
+
     }
 
-    async delayedLoop() {
-        this.spinButton.disabled = true;
+    //populate the wheel with random values and set colors
+    populate = () => {
 
-        
+        let random = Math.ceil(Math.random() * 55);
 
-        for (let i = 0; i <= 3; i++) {
-            const currentIndex = this.wheel.getCurrentIndex();
-            const prize = this.wheel.items[currentIndex]._label;
-            
+        for (let i = 1; i <= 18; i++) {
 
 
-            if (prize !== "  3 Free spins") {
-                this.wheelLogic.spins.push(prize);
-            }
 
-            if (i < 3) {
+            const sector = document.createElement("div");
+            sector.innerHTML = i === 2 ? `<span>Free Spins</span>` : `<span> $${i * random} </span>`;
+            sector.className = "sector";
+            sector.style.backgroundColor = this.getRandomBackgroundColor();
+            sector.style.setProperty("--i", `${i}`)
+            this.wheel.appendChild(sector);
+        }
+    }
 
-
+    //free spins
+    async spinThreeTimes() {
+        await (async () => {
+            for (let i = 0; i < 3; i++) {
                 party.confetti(document.body, {
                     count: party.variation.range(40, 200),
                 });
-                this.spin()
+                const result = await this.spin();
 
 
-
-
-            } else if (currentIndex !== 17) {
-                this.totalHeading.style.display = "flex";
-                this.wheelLogic.spins ? this.totalHeading.textContent = `Total: ${this.wheelLogic.calculateTotal()}!!!` : null;
-                this.wheelLogic.spins = [];
+                Number(result) !== "NaN" ? this.wheelLogic.spins.push(result.slice(1)) : null
                 
             }
+        })();
 
-            await this.delay(5000);
+
+        if (this.wheelLogic.spins.length) {
+
+            this.totalHeading.style.display = "flex";
+            this.wheelLogic.spins ? (this.totalHeading.textContent = `Total: $${this.wheelLogic.calculateTotal()}!!!`) : null;
+        
+
         }
 
-
-        this.spinButton.disabled = false;
+        this.wheelLogic.spins = [];
 
     }
 
 
 
-    //function that spins the wheel either on button click or when having free spins
-    spin() {
-        const randomSector = this.wheelLogic.getRandomNumber();
-        this.wheel.spinToItem(randomSector, 4000, true, 2, 1)
-    }
 
-    //generating a different wheel on every reload
-    generateSectors() {
-        let arr = []
-        let randomizer = Math.floor(Math.random() * 5) || 2
 
-        for (let i = 1; i < 18; i++) {
-            arr.push(
-                {
-                    label: `${i * 100 * randomizer}`
-                }
-            )
-        }
 
-        arr.push({ label: "  3 Free spins" })
 
-        return arr;
-    }
-
-    props = {
-        items: this.generateSectors()
-    }
 
 
     //little function to randomize the colors of every sector
@@ -135,5 +155,3 @@ class ViewController {
 
 
 const viewController = new ViewController();
-
-const duration = 4000;

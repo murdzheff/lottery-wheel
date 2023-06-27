@@ -4,53 +4,91 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   min-height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: 0;
 }
 
-.wheel-container {
-  min-height: 50vh;
-  min-width: 50vw;
-  max-height: 50vh;
-  max-width: 50vw;
+.wheel {
+  color: white;
+}
+
+.container {
+  position: relative;
+  width: 400px;
+  height: 400px;
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container .spin {
+  display: flex;
+  position: absolute;
+  height: 60px;
+  color: whitesmoke;
+  width: 60px;
+  background-color: green;
+  border-radius: 50%;
   align-items: center;
   justify-content: center;
+  z-index: 10;
+  border: 5px solid red;
+  font-weight: 900;
 }
 
+.spin:disabled {
+  background-color: red;
+}
 
-#spin {
+.spin::before {
+  content: "";
+  display: flex;
+  clip-path: polygon(52% 20%, 25% 100%, 75% 100%);
+  background-color: red;
+  height: 50%;
+  width: 50%;
+  z-index: 0;
   position: absolute;
+  bottom: 98%;
+}
+
+.wheel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: aquamarine;
   border-radius: 50%;
-  width: 5%;
-  height: 11%;
-  border: 2px solid rgb(242, 238, 247);
-  background-color: rgb(30, 156, 62);
-  cursor: pointer;
-  font-size: larger;
-  color: white;
-  align-self: center;
-  justify-self: center;
-  font-weight: bold;
-  z-index: 5;
+  overflow: hidden;
+  border: 2px solid red;
+  transition: transform 5s ease;
 }
 
-#spin:disabled {
-  color: red;
-  background-color: black;
-  cursor: default;
-}
-
-
-
-#arrow {
+.sector {
   position: absolute;
-  max-width: 5vw;
-  bottom: 70vh;
-  left: 47.5vw;
+  width: 50%;
+  height: 50%;
+  transform-origin: bottom right;
+  transform: rotate(calc(20deg * var(--i)));
+  clip-path: polygon(0 0, 30% 0, 100% 100%, 0 30%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.sector span {
+  position: relative;
+  transform: rotate(50deg);
+  color: rgb(255, 255, 255);
+  font-size: large;
+  font-weight: bolder;
+}
+
 
 
 #total {
@@ -82,3 +120,7 @@ body {
     transform: translateY(0);
   }
 }
+
+
+
+

@@ -85,7 +85,6 @@ class WheelLogic {
             if (!this.set.length) {
                 this.lastNumber = null;
                 this.populateSet();
-                console.log(this.set)
             }
 
             this.lastNumber = curr;
@@ -107,3 +106,4 @@ class WheelLogic {
 
 
 const wheelLogic = new WheelLogic();
+
